@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<h1>Hey there! You are logged in as ${x}</h1>
+
+
+
+
+
+
+<!-- form action="{{url_for('sign_up')}}" method="GET"-->
+	<!--<button type="submit">Logout</button></form> -->
+<h5>click here to<a = href="/logout">logout</a>
+<p>add a new note!</p>
+<form method="POST" action="/new_note">
+<label class="header">Title:</label>
+	<input type="header" id="header" name="header"><br>
+
+	<label style="width: 7", class="notes"> write your note</label>
+	<input type= "notes" id="notes" name="notes"><br>
+<button type="input">save note</button></form>
+<p>modify an existing note!</p>
+<p>to find your note enter its title</p>
+<form method="PATCH" action='/new_note'>
+	<label class="header">Title:</label>
+	<input id="header" name="header"><br>
+	<label style="width: 7", class="notes"> write your note</label>
+	<input type= "notes" id="notes" name="notes"><br>
+<button type="input">save note</button></form>
+</form>
+</body>
