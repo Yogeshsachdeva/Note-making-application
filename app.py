@@ -14,11 +14,11 @@ db = client.get_database("log_in_details")
 login_details =db.log_in_details
 
 
-notes = Flask(__name__)
+app = Flask(__name__)
 #login_manager = flask_login.LoginManager()
-#login_manager.init_app(notes)
+#login_manager.init_app(app)
 
-@notes.route("/")
+@app.route("/")
 def app_home():
 	if 'email' in session:
 		template = Template(filename="main.html" ) 
@@ -28,7 +28,7 @@ def app_home():
 		#return 'you are logged in as ' + session['email'] + '<br>' + '<b><a href = "/logout">click here to log out</a></b>'
 	return render_template("home.html")
 
-@notes.route("/login_page", methods=['POST','GET'])
+@app.route("/login_page", methods=['POST','GET'])
 def login_page():
 	if request.method=='POST':
 		email = login_details.db.users
@@ -45,7 +45,7 @@ def login_page():
 
 
 
-@notes.route('/logout', methods=['GET',])
+@app.route('/logout', methods=['GET',])
 def logout():
     if request.method =='GET':
     	#return render_template('home.html')
@@ -58,7 +58,7 @@ def user_reloader(email):
 	if email not in login_details[email]:
 		return'''
     
-@notes.route("/sign_up", methods=['POST','GET'])
+@app.route("/sign_up", methods=['POST','GET'])
 def sign_up():
 	if request.method =='POST':
 		email = login_details.db.users
@@ -75,7 +75,7 @@ def sign_up():
 		return 'an account with that email already exists'
 	return render_template('sign_up.html')
 
-@notes.route("/new_note", methods=['POST', 'GET'])
+@app.route("/new_note", methods=['POST', 'GET'])
 def new_note():
 	if 'email' in session:
 		if request.method =='POST':
@@ -104,5 +104,5 @@ def new_note():
 
 
 if __name__ == '__main__':
-	notes.secret_key = 'mysecret'
-	notes.run(port=2222, use_reloader =True, debug =True)
+	app.secret_key = 'mysecret'
+	app.run(port=2222, use_reloader =True, debug =True)
