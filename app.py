@@ -7,14 +7,16 @@ import bcrypt
 import time
 from mako.template import Template
 from flask_session import Session
+from bson import json_util
 
 MONGODB_URI = "mongodb://mmm:qazwsx123@ds251827.mlab.com:51827/log_in_details"
 client = MongoClient(MONGODB_URI)
 db = client.get_database("log_in_details")
 login_details =db.log_in_details
-
+store_notes = login_details.db.store_notes
 
 app = Flask(__name__)
+app.secret_key = 'mysecret'
 #login_manager = flask_login.LoginManager()
 #login_manager.init_app(app)
 
@@ -75,11 +77,11 @@ def sign_up():
 		return 'an account with that email already exists'
 	return render_template('sign_up.html')
 
-@app.route("/new_note", methods=['POST', 'GET'])
+@app.route("/new_note", methods=['POST', 'GET', 'DELETE'])
 def new_note():
 	if 'email' in session:
 		if request.method =='POST':
-			store_notes = login_details.db.store_notes
+			#store_notes = login_details.db.store_notes
 			header=store_notes.find({"header": request.form['header']})
 			
 			if header:
@@ -90,6 +92,23 @@ def new_note():
 				store_notes.insert(user)
 				return 'your note has been saved!'
 			return 'that title already exists. Choose a new one.'
+		if request.method=='DELETE':
+			header=store_notes.find({'header':request.form['header']})
+			if not header:
+				return 'that note does not exist'
+			store_notes.delete({"header":request.form['header']})
+			return 'your note was successfully deleted'
+
+@app.route("/notes/<header>/", methods=['GET','PATCH','DELETE'])
+def get_notes(header):
+	notes=store_notes.find_one({"header":header})
+	if not notes:
+		return "that note doesn't exist"
+	if request.method=='GET':
+		return json_util.dumps(notes)
+	elif request.method=="DELETE":
+		store_notes.delete_one({"header":header})
+		return "the note was successfully deleted!"
 
 #@notes.route("/change", methods=['GET','POST','PATCH','DELETE'])
 		# if request.method =='PATCH':
@@ -104,5 +123,5 @@ def new_note():
 
 
 if __name__ == '__main__':
-	app.secret_key = 'mysecret'
+	
 	app.run(port=2222, use_reloader =True, debug =True)
