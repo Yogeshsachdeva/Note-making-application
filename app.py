@@ -92,31 +92,28 @@ def new_note():
 				store_notes.insert(user)
 				return 'your note has been saved!'
 			return 'that title already exists. Choose a new one.'
-		if request.method=='DELETE':
-			header=store_notes.find({'header':request.form['header']})
-			if not header:
-				return 'that note does not exist'
-			store_notes.delete({"header":request.form['header']})
-			return 'your note was successfully deleted'
+		#if request.method=='DELETE':
+		#	header=store_notes.find({'header':request.form['header']})
+		#	if not header:
+		#		return 'that note does not exist'
+		#	store_notes.delete({"header":request.form['header']})
+		#	return 'your note was successfully deleted'
 
 @app.route("/notes/<header>/", methods=['GET','PATCH','DELETE'])
 def get_notes(header):
 	notes=store_notes.find_one({"header":header})
 	if not notes:
-		return "that note doesn't exist"
+		return jsonify({"that note doesn't exist"})
 	if request.method=='GET':
 		return json_util.dumps(notes)
+	elif request.method=='PATCH':
+		store_notes.update_one({"header":header},{'$set':request.form})
+		return jsonify({"result":"note was successfully updated"})	
 	elif request.method=="DELETE":
 		store_notes.delete_one({"header":header})
-		return "the note was successfully deleted!"
+		return jsonify({"the note was successfully deleted!"})
 
-#@notes.route("/change", methods=['GET','POST','PATCH','DELETE'])
-		# if request.method =='PATCH':
-		# 	store_notes.find_one({'header':request.form['header']})
-		# 	store_notes.update_one({'note': request.form['notes']},{'$set':request.form})
-		# 	return 'your note has been modified!'
-		# elif request.method =='DELETE':
-		# 	store_notes.delete_one({})
+
 
 
 
