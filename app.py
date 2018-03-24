@@ -17,17 +17,12 @@ store_notes = login_details.db.store_notes
 
 app = Flask(__name__)
 app.secret_key = 'mysecret'
-#login_manager = flask_login.LoginManager()
-#login_manager.init_app(app)
 
 @app.route("/")
 def app_home():
 	if 'email' in session:
-		template = Template(filename="main.html" ) 
-		#print(template.render(x="Hello World!")		
+		template = Template(filename="main.html" ) 		
 		return template.render(x = session['email'])
-		#time.sleep(5)
-		#return 'you are logged in as ' + session['email'] + '<br>' + '<b><a href = "/logout">click here to log out</a></b>'
 	return render_template("home.html")
 
 @app.route("/login_page", methods=['POST','GET'])
@@ -39,27 +34,22 @@ def login_page():
 			if bcrypt.hashpw(request.form['password'].encode('UTF-8'), login_user['password']) == login_user['password']:
 				session['email'] = request.form['Lemail']
 				return redirect(url_for('app_home'))
-				#return "does it work fine?"
 		return 'Invalid username/password combination'
 	return render_template('login_page.html')	
 
-	#return render_template("login_page.html")
+	
 
 
 
 @app.route('/logout', methods=['GET',])
 def logout():
     if request.method =='GET':
-    	#return render_template('home.html')
+
     	session.pop('email', None)
-    #flash('You were logged out')
+    
     	return redirect(url_for('app_home'))
     
-'''@login_manager.user_reloader
-def user_reloader(email):
-	if email not in login_details[email]:
-		return'''
-    
+
 @app.route("/sign_up", methods=['POST','GET'])
 def sign_up():
 	if request.method =='POST':
@@ -71,8 +61,7 @@ def sign_up():
 			hashpass = bcrypt.hashpw(request.form['set_password'].encode('UTF-8'), bcrypt.gensalt())
 			email.insert({'email': request.form['email'], 'password': hashpass})
 			session['email'] = request.form['email']
-			#session['logged_in'] = True
-			#flash('you were logged in')	
+				
 			return redirect(url_for('app_home'))
 		return 'an account with that email already exists'
 	return render_template('sign_up.html')
@@ -92,12 +81,7 @@ def new_note():
 				store_notes.insert(user)
 				return 'your note has been saved!'
 			return 'that title already exists. Choose a new one.'
-		#if request.method=='DELETE':
-		#	header=store_notes.find({'header':request.form['header']})
-		#	if not header:
-		#		return 'that note does not exist'
-		#	store_notes.delete({"header":request.form['header']})
-		#	return 'your note was successfully deleted'
+		
 
 @app.route("/notes/<header>/", methods=['GET','PATCH','DELETE'])
 def get_notes(header):
